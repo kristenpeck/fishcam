@@ -1,26 +1,41 @@
+# This script is used to dump the metadata from the motion-detecting 
+#   video files to a csv before entering data to cut down on time
 
+#Author: Kristen Peck, 11 Oct 2021
+
+#load packages
 library("fs")
 library("tidyverse")
 library("lubridate")
 library("readxl")
 
-getwd()
+# check that you are in the correct working directory 
+#  (should be /Volumes/Fish Drive)
+getwd() 
 
-#extract file names and info
+#extract file names and info from video files (anything with .m4v extension)
 files <- list.files(path = ".",pattern="*.m4v",recursive = T)
 
-donnees <- data.frame(files) %>% 
+videodata <- data.frame(files) %>% 
   mutate(trap = substr(files,1,7), date = substr(files,9,18),
          type= ifelse(grepl("\\M",files),"M","C")) %>% 
-  filter(type %in% "M") %>% 
+  filter(type %in% "M", trap != "Sbear c") %>% 
   mutate(starttime = ymd_hms(paste(date,substr(files,31,38)),
-                                  tz = "GMT")) %>% #need to put as GMT because otherwise excel will screw it up
-  mutate(Sock=NA,jackSock=NA,Coho=NA,BTDV=NA,Steelhead=NA,
-         Whitefish=NA, Sucker=NA,Chin=NA,jackChin=NA,Other=NA,Comments=NA)
-         
-write_csv(donnees, "test.data.dump.csv",na = "")
+                             tz = "GMT")) %>% #need to put as GMT because otherwise excel will screw it up
+  mutate(Sock=NA,jackSock=NA,Coho=NA,BTDV=NA,Steelhead=NA,Rainbow=NA,
+         Whitefish=NA, Sucker=NA,Chin=NA,jackChin=NA,Other=NA,Comments=NA,
+         Analyzer.signoff=NA) 
 
+completed <- read_csv("2021VideoData.csv") %>% 
+  filter(!is.na(Analyzer.signoff))
+# double-check that this field (Analyzer.signoff) is 
+# filled out before running overwrite script!!!
+uniq <- unique(completed$files)
 
+addit.data <- videodata %>% 
+  filter(files != uniq) #this is filtering for any new files not already analyzed
 
+rewrite <- rbind(completed, addit.data)
 
+write_csv(rewrite, paste0(Sys.Date(),"testing.csv"),na = "")
 
