@@ -37,10 +37,10 @@ manual.count.daily <- read_excel("Daily.tally.BABINE.xlsx") %>%
 
 #read in camera data file
 
-cam.data <- read_csv("2021-10-13data.dump.csv")
+cam.data <- read_csv("2021-10-15data.dump.csv")
 
 (daily.summary.cam <- cam.data %>% 
-  filter(date %in% c(ymd("2021-10-7"):ymd("2021-10-11"))) %>% 
+  filter(date %in% c(ymd("2021-10-4"):ymd("2021-10-12"))) %>% 
   mutate(date = as.Date(date)) %>% 
   group_by(date) %>% 
   summarize(lg.SK = sum(Sock, na.rm=T), 
@@ -134,21 +134,3 @@ hourly.sum.stacked <- hourly.summary.cam %>%
 ggplot(hourly.sum.stacked)+
   geom_line(aes(x=hour, y=hourly.count, colour=species), size=2)
 
-#trying to add new data to an existing excel spreadsheet 
-
-original <- read_excel("2021-10-12data.dump.xlsx")
-additional <- read_excel("2021-10-13data.dump.xlsx")
-
-str(original)
-str(additional) #more rows, more data analysed
-
-#I want to retain all existing data and add on new empty data
-
-orig.data <- original %>% 
-  filter(!is.na(Analyzer.signoff))
-uniq <- unique(orig.data$files)
-
-addit.data <- additional %>% 
-  filter(files != uniq)
-
-rewrite <- rbind(orig.data, addit.data)
