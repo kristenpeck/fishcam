@@ -1,5 +1,6 @@
 # This script is used to dump the metadata from the motion-detecting 
 #   video files to a csv before entering data to cut down on time
+# Also appends new empty metadata to completed video file
 
 #Author: Kristen Peck, 11 Oct 2021
 
@@ -26,14 +27,17 @@ videodata <- data.frame(files) %>%
          Whitefish=NA, Sucker=NA,Chin=NA,jackChin=NA,Other=NA,Comments=NA,
          Analyzer.signoff=NA) 
 
-completed <- read_csv("2021VideoData.csv") %>% 
+#reading in completed analysis sheet
+
+completed <- read_excel("2021-10-12data.dump.xlsx") %>% 
   filter(!is.na(Analyzer.signoff))
 # double-check that this field (Analyzer.signoff) is 
 # filled out before running overwrite script!!!
 uniq <- unique(completed$files)
 
 addit.data <- videodata %>% 
-  filter(files != uniq) #this is filtering for any new files not already analyzed
+  filter(!(files %in% uniq)) 
+#this is filtering for any new files not already analyzed
 
 rewrite <- rbind(completed, addit.data)
 
