@@ -41,10 +41,11 @@ manual.count.daily <- read_excel("Daily.tally.BABINE.xlsx") %>%
 
 #read in camera data ####
 
-cam.data <- read_csv("2021-10-15data.dump.csv")
+cam.data <- read_csv("2021-10-18data.dump.csv")
 
 (daily.summary.cam <- cam.data %>% 
-  #filter(date %in% c(ymd("2021-10-6"):ymd("2021-10-12"))) %>%
+  mutate(date=ymd(date)) %>% 
+  filter(date %in% c(ymd("2021-10-6"):ymd("2021-10-17"))) %>%
   filter(!is.na(Analyzer.signoff)) %>% 
   mutate(date = as.Date(date)) %>% 
   group_by(date) %>% 
@@ -85,9 +86,9 @@ stack.all.SKCO <- rbind(manual.stacked, cam.stacked) %>%
 
 plot.cam.vs.man <- ggplot(stack.all.SKCO)+
   geom_line(aes(x=date, y=daily.count, col=species,linetype=method))+
-  scale_x_date(limits=c(ymd("2021-10-05","2021-10-12")))+
+  scale_x_date(limits=c(ymd("2021-10-05","2021-10-17")))+
   geom_vline(aes(xintercept=ymd("2021-10-06")))+
-  scale_y_continuous(limits=c(0,500))
+  scale_y_continuous(limits=c(0,1000))
 
 plot.cam.vs.man
 
@@ -106,10 +107,12 @@ plot.cam.vs.man2 <- ggplot(stack.all.sum, aes(x=date,
                                               y=all.fish, 
                                               fill = method)) +                           # ggplot2 with default settings
   geom_bar(stat = "identity")+
-  scale_x_date(limits=c(ymd("2021-10-03","2021-10-13")))+
+  scale_x_date(limits=c(ymd("2021-10-03","2021-10-17")),
+               date_breaks = "2 days")+
   #geom_vline(aes(xintercept=ymd("2021-10-06")))+
   scale_y_continuous(limits=c(0,1000))+
-  labs(y="daily fish count (all species)")
+  labs(y="daily fish count (all species)")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 plot.cam.vs.man2
 
@@ -126,27 +129,34 @@ all.daily <- rbind(daily.summary.cam, manual.count.daily) %>%
             jk.CH = sum(jk.CH, na.rm=T),
             BTDV = sum(BTDV, na.rm=T),
             ST = sum(ST, na.rm=T),
+            crew= paste(unique(crew),collapse=","),
             method= paste(unique(method),collapse=","),
             chutes=paste(unique(chutes), collapse=","))
 
 #summary table ####
 table.end <- all.daily %>% 
-  filter(date %in% ymd("2021-09-30"):ymd("2021-10-12")) %>%
+  filter(date %in% ymd("2021-09-30"):ymd("2021-10-15")) %>%
   mutate(date=format(date,"%d-%b-%y")) %>% 
   select(Date=date,`Large SK`=lg.SK,`Jack SK`=jk.SK,
          CO,PK,`Large CH`=lg.CH,`Jack CH`=jk.CH,`BT/DV`=BTDV,
          ST,method)
 table.end
 
+#export daily counts 
+
+write_csv(all.daily, "Daily.counts.all.Babine.csv")
+
+
+
 # plots, daily counts - all spp ####
 
 daily.sum.stacked <- all.daily%>% 
-  select(-c(method, chutes)) %>% 
+  select(-c(method, chutes, crew)) %>% 
   gather("species","daily.count",-date)
 
 plot.daily.all.spp <- ggplot(daily.sum.stacked)+
   geom_line(aes(x=date, y=daily.count, colour=species), size=1)+
-  geom_vline(aes(xintercept=ymd("2021-10-02")))
+  geom_vline(aes(xintercept=ymd("2021-10-06")))
 plot.daily.all.spp
 
 
@@ -168,7 +178,7 @@ plot.daily.salmon
 #just looking at end of Sept-Oct
 plot.daily.salmon.end <- ggplot(daily.sum.stacked.salmon)+
   geom_line(aes(x=date, y=daily.count, colour=species), size=1)+
-  scale_x_date(limits=c(ymd("2021-10-01","2021-10-12")),
+  scale_x_date(limits=c(ymd("2021-10-01","2021-10-15")),
                date_breaks = "2 days")+
   geom_vline(aes(xintercept=ymd("2021-10-06")))+
   scale_y_continuous(limits=c(0,1300))+
@@ -183,7 +193,7 @@ daily.sum.stacked.coho <- daily.sum.stacked %>%
 
 plot.daily.coho <- ggplot(daily.sum.stacked.coho)+
   geom_line(aes(x=date, y=daily.count, colour=species), size=1)+
-  scale_x_date(limits=c(ymd("2021-08-15","2021-10-12")))+
+  scale_x_date(limits=c(ymd("2021-08-15","2021-10-15")))+
   geom_vline(aes(xintercept=ymd("2021-10-06")))#+
 # scale_y_continuous(limits=c(0,2500))
 plot.daily.coho

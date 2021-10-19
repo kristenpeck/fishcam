@@ -11,10 +11,10 @@ source("reporting.R")
 ls()
 ```
 
-## Activity summary, Oct 2-16 2021
+## Activity summary, Oct 2-15 2021
 
-Following the end of the regular season at the Babine Fish Fence, DFO and Lake Babine Nation staff have been working hard to run a pilot camera project at the fence since Oct. 2nd. Four camera chutes were installed to replace the manual counting traps between Oct. 5th and Oct.7th by Dean Miller and the crew. The replacement of the regular counting traps with the camera chutes has been a shift in operations, but overall the process of running the fence has remained the same: daily maintenance of the fence panels, opening and closing gates, manually counting the remaining traps, running camp, and making sure the camera chutes are clear of debris and continuously recording. The staff have been amazing despite some challenges, and the fence has remained in good condition and fish tight.
-There is a time lag in analyzing the video due to the large amount of time this takes for four cameras, but the majority of the fish seemed to have tuned into the camera chutes rather than pass through the remaining three counting traps. So few fish were passing through the manual counting traps 1 and 2 (closest to camp) that we closed those traps as of Oct 16th. Trap 7 is the only manual counting trap still open, and that trap is passing about a dozen fish per day. We have been leaving two camera chutes open all night and are getting good footage of those fish passing through during dark hours due to some excellent lighting. The footage is great, and we are catching up on the video to provide data out to all interested folks on an approximately weekly basis going forward. Here are some preliminary results from the end of the season both the manual traps and the cameras:
+Following the end of the regular season at the Babine Fish Fence, DFO and Lake Babine Nation staff have been working hard to run a pilot camera project at the fence since Oct. 2nd. Four camera chutes were installed to replace the manual counting traps between Oct. 5th and Oct.7th by Dean Miller and the crew. The replacement of the regular counting traps with the camera chutes has been a shift in operations, but overall the process of running the fence has remained the same: daily maintenance of the fence panels, opening and closing gates, manually counting the non-camera traps, running camp, and making sure the camera chutes are clear of debris and continuously recording. The staff have been amazing despite some early challenges, and the fence has remained in good condition and fish tight.
+There is a time lag in analyzing the video due to the time this takes for four cameras, but the majority of the fish seem to have tuned into the camera chutes rather than pass through the non-camera counting traps. So few fish were passing through the manual counting traps 1 and 2 (closest to camp) that we closed those traps as of Oct 16th. Trap 7 is the only manual counting trap still open, and that trap is passing about a dozen fish per day. We have been leaving two camera chutes open all night and are getting good footage of those fish passing through during dark hours due to some excellent lighting. The footage is great, and Tyler and crew are catching up on the video to provide data out to all interested folks on an approximately weekly basis going forward. Here are some preliminary results from the last couple weeks, including results from both the manual traps and the cameras:
 
 
 ```{r summary table, echo=FALSE, warnings=F}
@@ -22,7 +22,7 @@ library(knitr)
 kable(table.end)
 ```
 
-## Compare camera counts (traps 3-6) and manual counts (traps 1,2 and 7)
+## Compare fish counts from cameras (traps 3-6) and manual traps (traps 1,2 and 7)
 
 ```{r figure cam vs man, echo=FALSE,warnings=F, fig.height=4, fig.width=6, fig.cap = "Daily total number of fish passing through the camera chutes (traps 3-6) versus the manual counting traps (traps 1,2 and 7)."}
 plot.cam.vs.man2
@@ -49,4 +49,11 @@ plot.cumul.daily
 plot.cumul.daily.coho
 ```
 
+**Note on Species Codes:**
+CO = Coho; 
+jk.CH = jack Chinook; 
+jk.SK = jack Sockeye; 
+lg.CH = large Chinook; 
+lg.SK = large Sockeye; 
+PK = Pink
 
