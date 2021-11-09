@@ -1,7 +1,7 @@
 ---
 title: "Babine Camera Project Summary"
 author: "Kristen Peck"
-date: "17 Oct., 2021"
+date: "9 November, 2021"
 output: word_document
 ---
 
@@ -11,10 +11,9 @@ source("reporting.R")
 ls()
 ```
 
-## Activity summary, Oct 2-15 2021
+## Activity summary, Nov. 1 to 7, 2021 ##
 
-Following the end of the regular season at the Babine Fish Fence, DFO and Lake Babine Nation staff have been working hard to run a pilot camera project at the fence since Oct. 2nd. Four camera chutes were installed to replace the manual counting traps between Oct. 5th and Oct.7th by Dean Miller and the crew. The replacement of the regular counting traps with the camera chutes has been a shift in operations, but overall the process of running the fence has remained the same: daily maintenance of the fence panels, opening and closing gates, manually counting the non-camera traps, running camp, and making sure the camera chutes are clear of debris and continuously recording. The staff have been amazing despite some early challenges, and the fence has remained in good condition and fish tight.
-There is a time lag in analyzing the video due to the time this takes for four cameras, but the majority of the fish seem to have tuned into the camera chutes rather than pass through the non-camera counting traps. So few fish were passing through the manual counting traps 1 and 2 (closest to camp) that we closed those traps as of Oct 16th. Trap 7 is the only manual counting trap still open, and that trap is passing about a dozen fish per day. We have been leaving two camera chutes open all night and are getting good footage of those fish passing through during dark hours due to some excellent lighting. The footage is great, and Tyler and crew are catching up on the video to provide data out to all interested folks on an approximately weekly basis going forward. Here are some preliminary results from the last couple weeks, including results from both the manual traps and the cameras:
+DFO and LBN continue to run the Babine Fish Fence, which has remained fish tight since we switched to the camera extension project in early October. The numbers of both sockeye and coho are starting to trickle down, with an average of `r round(mean(unlist(table.end[(nrow(table.end)-7):nrow(table.end),2]),na.rm=T),0)` daily sockeye and `r round(mean(unlist(table.end[(nrow(table.end)-7):nrow(table.end),4]),na.rm=T),0)` daily coho over the last week. One of the cameras had a glitch so we closed that trap on the 6th until we can figure out the cause of the problem. We currently have three camera chutes running 24 hrs a day. Here is an updated summary of the counts up till a couple days ago:
 
 
 ```{r summary table, echo=FALSE, warnings=F}
@@ -30,7 +29,7 @@ plot.cam.vs.man2
 
 ## Daily counts for end of season
 
-```{r end of season, echo=FALSE, warnings=F, fig.height=4, fig.width=6, fig.cap ="Daily counts of salmon from Oct.1 to 12th. The vertical line marks the start of counting using the camera chutes."}
+```{r end of season, echo=FALSE, warnings=F, fig.height=4, fig.width=6, fig.cap ="Daily counts of salmon. The vertical line marks the start of counting using the camera chutes."}
 plot.daily.salmon.end
 ```
 
@@ -40,12 +39,18 @@ plot.daily.salmon.end
 plot.daily.salmon
 ```
 
+```{r coho whole season, echo=FALSE, warnings=F, fig.height=4, fig.width=6, fig.cap ="Daily counts of coho for the whole season of 2021. The vertical line marks the start of counting using the camera chutes."}
+plot.daily.coho
+```
+
+## Cumulative counts
+
 ```{r cumulative whole season, echo=FALSE, warnings=F, fig.height=4, fig.width=6, fig.cap ="Cumulative counts of salmon for the whole season of 2021. The vertical line marks the start of counting using the camera chutes."}
 plot.cumul.daily
 ```
 
 
-```{r cumulative coho whole season, echo=FALSE, warnings=F, fig.height=4, fig.width=6, fig.cap ="Cumulative coho counts of salmon for the whole season of 2021. The vertical line marks the start of counting using the camera chutes."}
+```{r cumulative coho whole season, echo=FALSE, warnings=F, fig.height=4, fig.width=6, fig.cap ="Cumulative coho counts for the whole season of 2021. The vertical line marks the start of counting using the camera chutes."}
 plot.cumul.daily.coho
 ```
 

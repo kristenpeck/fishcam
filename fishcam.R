@@ -24,22 +24,33 @@ videodata <- data.frame(files) %>%
   mutate(starttime = ymd_hms(paste(date,substr(files,31,38)),
                              tz = "GMT")) %>% #need to put as GMT because otherwise excel will screw it up
   mutate(Sock=NA,jackSock=NA,Coho=NA,BTDV=NA,Steelhead=NA,Rainbow=NA,
-         Whitefish=NA, Sucker=NA,Chin=NA,jackChin=NA,Other=NA,Comments=NA,
-         Analyzer.signoff=NA) 
-
+         Whitefish=NA, Sucker=NA,Chin=NA,jackChin=NA,PK=NA,Other=NA,Comments=NA,
+         Analyzer.signoff=NA, chute.open=NA) 
+str(videodata)
 #reading in completed analysis sheet
 
-completed <- read_excel("2021-10-12data.dump.xlsx") %>% 
-  filter(!is.na(Analyzer.signoff))
-# double-check that this field (Analyzer.signoff) is 
-# filled out before running overwrite script!!!
+completed <- read_csv("2021VideoData.csv",col_types=list(Sock=col_integer(),
+                                                         jackSock=col_integer(),
+                                                         Coho=col_integer(),
+                                                         BTDV=col_integer(),
+                                                         Steelhead=col_integer(),
+                                                         Rainbow=col_integer(),
+                                                         Whitefish=col_integer(), 
+                                                         Sucker=col_integer(),
+                                                         Chin=col_integer(),
+                                                         jackChin=col_integer(),
+                                                         PK=col_integer(),
+                                                         Other=col_integer())) %>%
+  mutate(date=dmy(date)) %>% 
+  filter(!is.na(Analyzer.signoff)) #make sure this field is filled out!!!
+
 uniq <- unique(completed$files)
 
-addit.data <- videodata %>% 
-  filter(!(files %in% uniq)) 
-#this is filtering for any new files not already analyzed
+not.completed <- videodata %>% 
+  filter(!(files %in% uniq)) #this is filtering for any new files not already analyzed
 
-rewrite <- rbind(completed, addit.data)
+#append old rows to empty rows
+new.file <- rbind(completed, not.completed)
 
-write_csv(rewrite, paste0(Sys.Date(),"testing.csv"),na = "")
+write_csv(new.file, "2021VideoData.csv",na = "")
 

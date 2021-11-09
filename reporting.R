@@ -36,30 +36,103 @@ library("ggplot2")
 manual.count.daily <- read_excel("Daily.tally.BABINE.xlsx") %>% 
   mutate(date = as.Date(date), method="manual") %>% 
   mutate(CO = lg.CO+jk.CO) %>% 
-  select(-c(lg.CO,jk.CO))
-
+  select(c(date,lg.SK,jk.SK,CO,PK,lg.CH,jk.CH,ST,BTDV,crew,chutes,method))
+str(manual.count.daily)
 
 #read in camera data ####
+cam.data1 <- read_csv("2021VideoData_4Oct-3Nov2021.csv",
+                     col_types = list(date=col_character(),
+                                      Sock=col_double(),
+                                      jackSock=col_double(),
+                                      Coho=col_double(),
+                                      Steelhead=col_double(),
+                                      BTDV=col_double(),
+                                      Rainbow=col_double(),
+                                      Whitefish=col_double(),
+                                      Sucker=col_double(),
+                                      Chin=col_double(),
+                                      jackChin=col_double(),
+                                      PK=col_double(),
+                                      Other=col_double())) %>% 
+              mutate(date = dmy(date))
+str(cam.data1)
 
-cam.data <- read_csv("2021-10-18data.dump.csv")
+cam.data2 <- read_csv("2021-11-08data.dump.csv",
+                     col_types = list(date=col_date(),
+                                      Sock=col_double(),
+                                      jackSock=col_double(),
+                                      Coho=col_double(),
+                                      Steelhead=col_double(),
+                                      BTDV=col_double(),
+                                      Rainbow=col_double(),
+                                      Whitefish=col_double(),
+                                      Sucker=col_double(),
+                                      Chin=col_double(),
+                                      jackChin=col_double(),
+                                      PK=col_double(),
+                                      Other=col_double())) %>% 
+              mutate(chute.open = "Y")
+str(cam.data2)
+
+cam.data <- rbind(cam.data1,cam.data2)
+str(cam.data)
+
+#Short QA# 
+
+range(cam.data$date)
+
+qa <- cam.data %>% 
+  filter(chute.open %in% "Y") %>% 
+  mutate(hr = hour(starttime)) 
+
+ggplot(qa)+
+  geom_histogram(aes(x=hr, fill=trap),binwidth=1, position = "dodge")
+
+#plot each chute over time
+unique(qa$trap)
+chute3 <- qa %>% 
+  filter(trap %in% c("Chute 3"))
+chute4 <- qa %>% 
+  filter(trap %in% c("Chute 4"))
+chute5 <- qa %>% 
+  filter(trap %in% c("Chute 5"))
+chute6 <- qa %>% 
+  filter(trap %in% c("Chute 6"))
+
+ggplot(chute3)+
+  geom_histogram(aes(x=starttime,fill=trap), binwidth=60*60)
+ggplot(chute4)+
+  geom_histogram(aes(x=starttime,fill=trap), binwidth=60*60)
+ggplot(chute5)+
+  geom_histogram(aes(x=starttime,fill=trap), binwidth=60*60)
+ggplot(chute6)+
+  geom_histogram(aes(x=starttime,fill=trap), binwidth=60*60)
+
+#reporting
+
+cam.date.range <- c(ymd("2021-10-06"):ymd("2021-11-08"))
+plot.date.limit <- c(ymd("2021-10-03","2021-11-08"))
+table.date.range <- c(ymd("2021-10-20"):ymd("2021-11-07"))
 
 (daily.summary.cam <- cam.data %>% 
   mutate(date=ymd(date)) %>% 
-  filter(date %in% c(ymd("2021-10-6"):ymd("2021-10-17"))) %>%
+  filter(date %in% cam.date.range) %>%
   filter(!is.na(Analyzer.signoff)) %>% 
-  mutate(date = as.Date(date)) %>% 
+  filter(chute.open %in% "Y") %>% 
   group_by(date) %>% 
   summarize(lg.SK = sum(Sock, na.rm=T), 
             jk.SK = sum(jackSock, na.rm=T),
             CO = sum(Coho, na.rm=T),
-            PK=NA,
+            PK=sum(PK, na.rm=T),
             lg.CH = sum(Chin, na.rm=T),
             jk.CH = sum(jackChin, na.rm=T),
             BTDV = sum(BTDV, na.rm=T),
             ST = sum(Steelhead, na.rm=T),
             crew="DFO", 
             method="cam",
-            chutes=paste(unique(trap),collapse = ",")))
+            chutes=paste(unique(trap),collapse = ",")) %>% 
+    mutate(date=ymd(date)) )
+
 
 
 
@@ -86,7 +159,7 @@ stack.all.SKCO <- rbind(manual.stacked, cam.stacked) %>%
 
 plot.cam.vs.man <- ggplot(stack.all.SKCO)+
   geom_line(aes(x=date, y=daily.count, col=species,linetype=method))+
-  scale_x_date(limits=c(ymd("2021-10-05","2021-10-17")))+
+  scale_x_date(limits=plot.date.limit)+
   geom_vline(aes(xintercept=ymd("2021-10-06")))+
   scale_y_continuous(limits=c(0,1000))
 
@@ -98,7 +171,7 @@ stack.all.sum  <- stack.all %>%
 
 ggplot(stack.all.sum)+
   geom_line(aes(x=date, y=all.fish, col=method))+
-  scale_x_date(limits=c(ymd("2021-10-04","2021-10-12")))+
+  scale_x_date(limits=plot.date.limit)+
   geom_vline(aes(xintercept=ymd("2021-10-06")))+
   scale_y_continuous(limits=c(0,1000))+
   labs(y="total daily fish counted")
@@ -107,7 +180,7 @@ plot.cam.vs.man2 <- ggplot(stack.all.sum, aes(x=date,
                                               y=all.fish, 
                                               fill = method)) +                           # ggplot2 with default settings
   geom_bar(stat = "identity")+
-  scale_x_date(limits=c(ymd("2021-10-03","2021-10-17")),
+  scale_x_date(limits=plot.date.limit,
                date_breaks = "2 days")+
   #geom_vline(aes(xintercept=ymd("2021-10-06")))+
   scale_y_continuous(limits=c(0,1000))+
@@ -135,7 +208,7 @@ all.daily <- rbind(daily.summary.cam, manual.count.daily) %>%
 
 #summary table ####
 table.end <- all.daily %>% 
-  filter(date %in% ymd("2021-09-30"):ymd("2021-10-15")) %>%
+  filter(date %in% table.date.range) %>%
   mutate(date=format(date,"%d-%b-%y")) %>% 
   select(Date=date,`Large SK`=lg.SK,`Jack SK`=jk.SK,
          CO,PK,`Large CH`=lg.CH,`Jack CH`=jk.CH,`BT/DV`=BTDV,
@@ -168,7 +241,7 @@ daily.sum.stacked.salmon <- daily.sum.stacked %>%
 
 plot.daily.salmon <- ggplot(daily.sum.stacked.salmon)+
   geom_line(aes(x=date, y=daily.count, colour=species), size=1)+
-  scale_x_date(limits=c(ymd("2021-07-15","2021-10-15")))+
+  scale_x_date(limits=c(ymd("2021-07-15"),plot.date.limit[2]))+
   geom_vline(aes(xintercept=ymd("2021-10-06")))#+
   # scale_y_continuous(limits=c(0,2500))
 plot.daily.salmon
@@ -178,7 +251,7 @@ plot.daily.salmon
 #just looking at end of Sept-Oct
 plot.daily.salmon.end <- ggplot(daily.sum.stacked.salmon)+
   geom_line(aes(x=date, y=daily.count, colour=species), size=1)+
-  scale_x_date(limits=c(ymd("2021-10-01","2021-10-15")),
+  scale_x_date(limits=plot.date.limit,
                date_breaks = "2 days")+
   geom_vline(aes(xintercept=ymd("2021-10-06")))+
   scale_y_continuous(limits=c(0,1300))+
@@ -193,7 +266,7 @@ daily.sum.stacked.coho <- daily.sum.stacked %>%
 
 plot.daily.coho <- ggplot(daily.sum.stacked.coho)+
   geom_line(aes(x=date, y=daily.count, colour=species), size=1)+
-  scale_x_date(limits=c(ymd("2021-08-15","2021-10-15")))+
+  scale_x_date(limits=c(ymd("2021-08-15"),plot.date.limit[2]))+
   geom_vline(aes(xintercept=ymd("2021-10-06")))#+
 # scale_y_continuous(limits=c(0,2500))
 plot.daily.coho
