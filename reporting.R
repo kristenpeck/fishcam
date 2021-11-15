@@ -9,26 +9,36 @@ library("ggplot2")
 
 #extract prior babine data
 
-# dates.babine <- excel_sheets("BabineFence_DailyCounts_2021.xlsx")
+# dates.babine <- excel_sheets("Final Copy of BabineFence_DailyCounts&Summary_2021.xlsx")
 # dates.babine <- dates.babine[2:81]
-# 
-# #cleaner dates, check that they match
-# date.range <- as_date(c(ymd("2021-07-14"):ymd("2021-10-01")))
-# data.frame(dates.babine,date.range)
-# 
-# summer.babine <- data.frame(date=date.range,lg.SK = NA,jk.SK =NA, 
-#                             lg.CO=NA,jk.CO=NA,
-#                             PK=NA, lg.CH=NA,jk.CH=NA, ST=NA)
-# 
+# # 
+# # #cleaner dates, check that they match
+#  date.range <- as_date(c(ymd("2021-07-14"):ymd("2021-10-01")))
+#  data.frame(dates.babine,date.range)
+#  
+#  summer.babine <- data.frame(date=date.range,lg.SK = NA,jk.SK =NA, 
+#                              lg.CO=NA,jk.CO=NA,
+#                              PK=NA, lg.CH=NA,jk.CH=NA, ST=NA,
+#                              BTDV=NA,crew="LBN",chutes="Chutes 1-7",
+#                              time1="07:00",airtemp1=NA,watertemp1=NA,
+#                              waterlevel1=NA,
+#                              time2="19:00",airtemp2=NA,watertemp2=NA,
+#                              waterlevel2=NA)
+#  
 # for (i in 1:80){
-#   tmp <- read_excel("BabineFence_DailyCounts_2021.xlsx", 
-#            sheet = i+1,range = "D18:K18",col_names = F)
-#   summer.babine[i,2:9] <- tmp
-# }
-# 
-# summer.babine$crew <- "LBN"
-# 
-# write_excel_csv(summer.babine, "Daily.tally.BABINE.csv")
+#    tmp <- read_excel("Final Copy of BabineFence_DailyCounts&Summary_2021.xlsx", 
+#             sheet = i+1,range = "D18:K18",col_names = F)
+#    tmp2 <- t(read_excel("Final Copy of BabineFence_DailyCounts&Summary_2021.xlsx", 
+#                      sheet = i+1,range = "D21:D23",col_names = F))
+#    tmp3 <- t(read_excel("Final Copy of BabineFence_DailyCounts&Summary_2021.xlsx", 
+#                         sheet = i+1,range = "G21:G23",col_names = F))
+#    summer.babine[i,2:9] <- tmp
+#    summer.babine[i,14:16] <-tmp2
+#    summer.babine[i,18:20] <-tmp3
+#  }
+#  head(summer.babine)
+#  
+#  write_csv(summer.babine, "Daily.tally.BABINE.csv")
 
 
 
@@ -57,7 +67,7 @@ cam.data1 <- read_csv("2021VideoData_4Oct-3Nov2021.csv",
               mutate(date = dmy(date))
 str(cam.data1)
 
-cam.data2 <- read_csv("2021-11-08data.dump.csv",
+cam.data2 <- read_csv("2021-11-15data.dump.csv",
                      col_types = list(date=col_date(),
                                       Sock=col_double(),
                                       jackSock=col_double(),
@@ -110,9 +120,9 @@ ggplot(chute6)+
 
 #reporting
 
-cam.date.range <- c(ymd("2021-10-06"):ymd("2021-11-08"))
-plot.date.limit <- c(ymd("2021-10-03","2021-11-08"))
-table.date.range <- c(ymd("2021-10-20"):ymd("2021-11-07"))
+cam.date.range <- c(ymd("2021-10-06"):ymd("2021-11-14"))
+plot.date.limit <- c(ymd("2021-10-03","2021-11-14"))
+table.date.range <- c(ymd("2021-10-20"):ymd("2021-11-14"))
 
 (daily.summary.cam <- cam.data %>% 
   mutate(date=ymd(date)) %>% 
@@ -133,8 +143,32 @@ table.date.range <- c(ymd("2021-10-20"):ymd("2021-11-07"))
             chutes=paste(unique(trap),collapse = ",")) %>% 
     mutate(date=ymd(date)) )
 
+(daily.summary.cam.BC <- cam.data %>% 
+    mutate(date=ymd(date)) %>% 
+    filter(date %in% c(ymd("2021-10-06"):ymd("2021-11-14"))) %>%
+    filter(!is.na(Analyzer.signoff)) %>% 
+    filter(chute.open %in% "Y") %>% 
+    group_by(date) %>% 
+    summarize(BTDV = sum(BTDV, na.rm=T),
+              ST = sum(Steelhead, na.rm=T),
+              RBCT = sum(Rainbow,na.rm=T),
+              MW = sum(Whitefish, na.rm=T),
+              SU = sum(Sucker, na.rm=T),
+              crew="DFO", 
+              method="cam",
+              chutes=paste(unique(trap),collapse = ",")) %>% 
+    mutate(date=ymd(date)) )
 
+#write_csv(daily.summary.cam.BC,"daily.summary.cam.BC.csv" )
 
+cam.stacked.BC <- daily.summary.cam.BC %>% 
+  select(-c(crew,method,chutes)) %>% 
+  gather("species","daily.count",-date) %>% 
+  mutate(method="cam")
+
+plot.daily.BC <- ggplot(cam.stacked.BC)+
+  geom_line(aes(x=date, y=daily.count, colour=species), size=1)
+plot.daily.BC
 
 #Compare Cam vs. Manual ####
 
@@ -150,6 +184,8 @@ cam.stacked <- daily.summary.cam %>%
   select(-c(crew,method,chutes)) %>% 
   gather("species","daily.count",-date) %>% 
   mutate(method="cam")
+
+manual.stacked$daily.count
 
 stack.all<- rbind(manual.stacked, cam.stacked) 
 
@@ -214,6 +250,8 @@ table.end <- all.daily %>%
          CO,PK,`Large CH`=lg.CH,`Jack CH`=jk.CH,`BT/DV`=BTDV,
          ST,method)
 table.end
+
+
 
 #export daily counts 
 
