@@ -12,11 +12,13 @@ library("readxl")
 
 # check that you are in the correct working directory 
 #  (should be /Volumes/Fish Drive)
-getwd() 
+getwd()
+setwd("E:/")
 
 #extract file names and info from video files (anything with .m4v extension)
 files <- list.files(path = ".",pattern="*.m4v",recursive = T)
 
+#filter for motion videos only
 videodata <- data.frame(files) %>% 
   mutate(trap = substr(files,1,7), date = substr(files,9,18),
          type= ifelse(grepl("\\M",files),"M","C")) %>% 
@@ -27,6 +29,19 @@ videodata <- data.frame(files) %>%
          Whitefish=NA, Sucker=NA,Chin=NA,jackChin=NA,PK=NA,Other=NA,Comments=NA,
          Analyzer.signoff=NA, chute.open=NA) 
 str(videodata)
+
+#filter for continuous videos only
+videodata.c <- data.frame(files) %>% 
+  mutate(trap = substr(files,1,7), date = substr(files,9,18),
+         type= ifelse(grepl("\\M",files),"M","C"),
+         hour = substr(files,31,32)) %>% 
+  filter(type %in% "C", trap != "Sbear c") 
+str(videodata.c)
+
+range(videodata.c$date)
+write_csv(videodata.c,
+          "C:/Users/Peckk/OneDrive - DFO-MPO/Documents/R/fishcam/videodata.c_5-Oct_to_4-Nov.csv")
+
 #reading in completed analysis sheet
 
 completed <- read_csv("2021VideoData.csv",col_types=list(Sock=col_integer(),
