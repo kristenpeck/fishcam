@@ -6,6 +6,11 @@ library("lubridate")
 library("readxl")
 library("ggplot2")
 
+# citation("tidyverse")
+# citation("lubridate")
+# citation("readxl")
+# citation("ggplot2")
+
 
 #extract prior babine data
 
@@ -42,6 +47,8 @@ library("ggplot2")
 
 
 
+
+
 # read in manual data ####
 manual.count.daily <- read_excel("Daily.tally.BABINE.xlsx") %>% 
   mutate(date = as.Date(date), method="manual") %>% 
@@ -50,6 +57,10 @@ manual.count.daily <- read_excel("Daily.tally.BABINE.xlsx") %>%
   select(c(date,lg.SK,jk.SK,CO,PK,lg.CH,jk.CH,ST,BTDV,RBCT,MW,SU,
            crew,chutes,method))
 str(manual.count.daily)
+
+
+ 
+
 
 #read in camera data ####
 cam.data1 <- read_csv("2021VideoData_4Oct-3Nov2021.csv",
@@ -66,7 +77,8 @@ cam.data1 <- read_csv("2021VideoData_4Oct-3Nov2021.csv",
                                       jackChin=col_double(),
                                       PK=col_double(),
                                       Other=col_double())) %>% 
-              mutate(date = dmy(date))
+              mutate(date = dmy(date), hour=hour(starttime)) %>% 
+  filter(chute.open %in% "Y")
 str(cam.data1)
 
 cam.data2 <- read_csv("2021VideoData_4Nov-25Nov2021.csv",
@@ -83,13 +95,13 @@ cam.data2 <- read_csv("2021VideoData_4Nov-25Nov2021.csv",
                                       jackChin=col_double(),
                                       PK=col_double(),
                                       Other=col_double())) %>% 
-              mutate(chute.open = "Y")
+              mutate(chute.open = "Y", hour=hour(starttime))
 str(cam.data2)
 
 cam.data <- rbind(cam.data1,cam.data2)
 str(cam.data)
 
-#Short QA# 
+#### QA #### 
 
 range(cam.data$date)
 
@@ -112,15 +124,38 @@ chute6 <- qa %>%
   filter(trap %in% c("Chute 6"))
 
 ggplot(chute3)+
-  geom_histogram(aes(x=starttime,fill=trap), binwidth=60*60)
+  geom_histogram(aes(x=starttime,fill=trap), binwidth=60*60)+
+  scale_x_datetime(limits = range(cam.data$starttime))
 ggplot(chute4)+
-  geom_histogram(aes(x=starttime,fill=trap), binwidth=60*60)
+  geom_histogram(aes(x=starttime,fill=trap), binwidth=60*60)+
+  scale_x_datetime(limits = range(cam.data$starttime))
 ggplot(chute5)+
-  geom_histogram(aes(x=starttime,fill=trap), binwidth=60*60)
+  geom_histogram(aes(x=starttime,fill=trap), binwidth=60*60)+
+  scale_x_datetime(limits = range(cam.data$starttime))
 ggplot(chute6)+
-  geom_histogram(aes(x=starttime,fill=trap), binwidth=60*60)
+  geom_histogram(aes(x=starttime,fill=trap), binwidth=60*60)+
+  scale_x_datetime(limits = range(cam.data$starttime))
 
-#reporting
+#match motion detect video to continuous footage
+fishdrive1.c <- read_csv("videodata.c_5-Oct_to_4-Nov.csv",
+                         col_types = list(files=col_character(),
+                                          trap=col_character(),
+                                          date=col_date(),
+                                          type=col_character(),
+                                          hour=col_integer()))
+
+(zeros <- fishdrive1.c %>% 
+  right_join(cam.data1, by=c("date", "hour", "trap")) %>% 
+  arrange(date, trap,hour) %>% 
+  group_by(date, trap,hour) %>% 
+  summarize(all.fish = sum(Sock, jackSock, Coho, BTDV, Steelhead, 
+                Rainbow, Whitefish, Sucker, Chin, jackChin,
+                Other, PK, na.rm=T)) %>% 
+  filter(all.fish %in% 0))
+
+
+
+#### reporting ####
 
 cam.date.range <- c(ymd("2021-10-06"):ymd("2021-11-26"))
 extension.date.range <- c(ymd("2021-10-02"):ymd("2021-11-26"))
