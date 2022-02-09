@@ -16,6 +16,91 @@ library("ggplot2")
 # citation("lubridate")
 # citation("readxl")
 # citation("ggplot2")
+# citation("suncalc")
+# 
+# citation()
+
+#### ggplot theme: ####
+theme_babine <- function(base_size = 14) {
+  theme_bw(base_size = base_size) %+replace%
+    theme(
+      # L'ensemble de la figure
+      plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
+      # Zone où se situe le graphique
+      panel.grid.minor = element_blank(),
+      panel.border = element_blank(),
+      # Les axes
+      axis.title = element_text(size = rel(0.85), face = "bold"),
+      axis.text.x = element_text(size = rel(0.80), face = "bold", 
+                                 angle=60, hjust = 1, vjust=1),
+      axis.text.y = element_text(size = rel(0.80), face = "bold"),
+      axis.line = element_line(color = "black", arrow = arrow(length = unit(0.3, "lines"), type = "closed")),
+      # La légende
+      legend.position = c(.9, .9),
+      legend.title = element_text(size = rel(0.85), face = "bold"),
+      legend.text = element_text(size = rel(0.70), face = "bold"),
+      legend.key = element_rect(fill = "transparent", colour = NA),
+      legend.key.size = unit(1.5, "lines"),
+      legend.background = element_rect(fill = "transparent", colour = NA),
+      # Les étiquettes dans le cas d'un facetting
+      strip.background = element_rect(fill = "#17252D", color = "#17252D"),
+      strip.text = element_text(size = rel(0.85), face = "bold", color = "white", margin = margin(5,0,5,0))
+    )
+}
+
+theme_babine2 <- function(base_size = 14) {
+  theme_bw(base_size = base_size) %+replace%
+    theme(
+      # L'ensemble de la figure
+      plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
+      # Zone où se situe le graphique
+      panel.grid.minor = element_blank(),
+      panel.border = element_blank(),
+      # Les axes
+      axis.title = element_text(size = rel(0.85), face = "bold"),
+      axis.text.x = element_text(size = rel(0.80), face = "bold", 
+                                 angle=60, hjust = 1, vjust=1),
+      axis.text.y = element_text(size = rel(0.80), face = "bold"),
+      axis.line = element_line(color = "black", arrow = arrow(length = unit(0.3, "lines"), type = "closed")),
+      # La légende
+      legend.position = "right",
+      legend.title = element_text(size = rel(0.85), face = "bold"),
+      legend.text = element_text(size = rel(0.70), face = "bold"),
+      legend.key = element_rect(fill = "transparent", colour = NA),
+      legend.key.size = unit(1.5, "lines"),
+      legend.background = element_rect(fill = "transparent", colour = NA),
+      # Les étiquettes dans le cas d'un facetting
+      strip.background = element_rect(fill = "#17252D", color = "#17252D"),
+      strip.text = element_text(size = rel(0.85), face = "bold", color = "white", margin = margin(5,0,5,0))
+    )
+}
+
+theme_babine3 <- function(base_size = 14) {
+  theme_bw(base_size = base_size) %+replace%
+    theme(
+      # L'ensemble de la figure
+      plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
+      # Zone où se situe le graphique
+      panel.grid.minor = element_blank(),
+      panel.border = element_blank(),
+      # Les axes
+      axis.title = element_text(size = rel(0.85), face = "bold"),
+      axis.text.x = element_text(size = rel(0.80), face = "bold", 
+                                 angle=60, hjust = 1, vjust=1),
+      axis.text.y = element_text(size = rel(0.80), face = "bold"),
+      axis.line = element_line(color = "black", arrow = arrow(length = unit(0.3, "lines"), type = "closed")),
+      # La légende
+      legend.position = c(0.9,0.75),
+      legend.title = element_text(size = rel(0.85), face = "bold"),
+      legend.text = element_text(size = rel(0.70), face = "bold"),
+      legend.key = element_rect(fill = "transparent", colour = NA),
+      legend.key.size = unit(1.5, "lines"),
+      legend.background = element_rect(fill = "transparent", colour = NA),
+      # Les étiquettes dans le cas d'un facetting
+      strip.background = element_rect(fill = "#17252D", color = "#17252D"),
+      strip.text = element_text(size = rel(0.85), face = "bold", color = "white", margin = margin(5,0,5,0))
+    )
+}
 
 
 #extract prior babine data
@@ -114,10 +199,19 @@ cam.data <- read_excel("2021VideoData_QAd.xlsx",
                                      "text","numeric","numeric",
                                      "numeric","numeric","numeric","numeric",
                                      "numeric","numeric","numeric","numeric",
-                                     "numeric","numeric","text","text",
+                                     "numeric","numeric","numeric","text","text",
                                      "text","numeric")) %>% 
   mutate(starttime = as_datetime(starttime),date=as_date(date))
   
+#how many motion videos?
+str(cam.data)
+cam.data %>% 
+  filter(type %in% "M") %>% 
+  filter(is.na(Sock)&is.na(jackSock)&is.na(Coho)&is.na(BTDV)
+         &is.na(Steelhead)&is.na(Rainbow)&is.na(Whitefish)&is.na(Sucker)
+         &is.na(Chin)&is.na(jackChin)&is.na(Other)&is.na(PK)&is.na(Unknown)) %>% 
+  nrow()
+37955-28320
 
 
 #### QA #### 
@@ -157,9 +251,9 @@ fishdrive1.c <- read_csv("videodata.c_5-Oct_to_4-Nov.csv",
 
 
 
-# # # # # # # # # # # # # # # # # #
-#### Temp and water level #### # # 
-# # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # 
+#### Temp and water level #### 
+# # # # # # # # # # # # # # # 
 
 #fill in last water temps and levels from data sheets
 
@@ -183,21 +277,126 @@ temps.stack <- rbind(water1, water2) %>%
   pivot_longer(!datetime, names_to = "measure") %>% 
   filter(measure != "waterlevel")
 
+# max min water temp
+max.wt.temp <- temps.stack %>% 
+  filter(measure %in% "watertemp") %>% 
+  summarize(temp = max(value, na.rm=T))
+max.wt.temp.date <- temps.stack[which(temps.stack$value %in% max.wt.temp$temp),"datetime"]
+
+min.wt.temp <- temps.stack %>% 
+  filter(measure %in% "watertemp") %>% 
+  summarize(temp = min(value, na.rm=T))
+min.wt.temp.date <- temps.stack[which(temps.stack$value %in% min.wt.temp$temp),"datetime"]
+
+
 
 plot.temps <- ggplot(data=temps.stack)+
-  geom_line(aes(x=datetime, y=value, col=measure), size=.75)+
-  labs(x="Date",y="Temperature (deg. C)",col="")
+  geom_line(aes(x=datetime, y=value, col=measure))+
+  labs(x="Date",y="Temperature (deg. C)",col="")+
+  theme_babine()+
+  scale_x_datetime(date_breaks = "2 weeks", date_labels = "%d-%b")
 plot.temps
+
+#water level - Env Can station
+
+library(tidyhydat)
+#citation("tidyhydat")
+#download_hydat()
+
+hy_stations(station_number = "08EC013")
+
+ec.flows.real.raw <- realtime_dd(station_number = "08EC013")
+ec.flows.hist.raw <- hy_daily_flows(station_number = "08EC013")
+
+range(ec.flows.real.raw$Date)
+range(ec.flows.hist.raw$Date)
+
+# ec.flows.real <- ec.flows.real.raw %>%
+#   mutate(yr = year(Date)) %>%
+#   filter(yr %in% 2021, Parameter %in% "Flow") %>%
+#   select("STATION_NUMBER","Date","Parameter","Value",
+#           "Symbol","yr")
+# range(ec.flows.real$Date)
+
+ec.flows.hist <- ec.flows.hist.raw %>%
+  mutate(yr = year(Date), mon = month(Date), yday = yday(Date)) %>%
+  filter(yr %in% 2010:2020, Parameter %in% "Flow")
+range(ec.flows.hist$Date, na.rm=T)
+
+
+#ec.flows <- rbind(ec.flows.hist, ec.flows.real)
+ec.flows <- ec.flows.hist %>% 
+  group_by(yday) %>% 
+  summarize(ave.daily.flow = mean(Value, na.rm=T), 
+            sd.daily.flow = sd(Value,na.rm=T)) %>% 
+  mutate(Date = as_date(yday, origin = ymd("2021-01-01")),
+         datetime = as_datetime(Date)) %>% 
+  filter(Date %in% ymd("2021-07-13"):ymd("2021-11-27"))
+ 
+#had to export csv for 2021 flows
+
+ec08EC013 <- read_csv("08EC013_2021Babine.csv",skip=11, 
+                      col_names = c("Date", "Parameter", "Value")) %>% 
+  mutate(Parameter = "Flow", datetime = dmy_hm(Date), 
+         Date = as_date(datetime)) %>% 
+  filter(Date %in% ymd("2021-07-10"):ymd("2021-11-25"))
+
+plot.flow.ec <-ggplot()+
+  geom_ribbon(data = ec.flows, aes(x=datetime, 
+                                   ymin=ave.daily.flow-sd.daily.flow,
+                                   ymax=ave.daily.flow+sd.daily.flow),
+              alpha=.25)+
+  geom_line(data = ec08EC013, aes(x=datetime, y=Value), col="blue")+
+  #geom_line(data = ec.flows, aes(x=datetime, y=ave.daily.flow+sd.daily.flow))+
+  scale_y_continuous(limits = 
+                       c(0, max(ec.flows$ave.daily.flow, na.rm=T)+50))+
+  scale_x_datetime(date_breaks = "2 weeks", date_labels = "%d-%b")+
+  labs(x="Date",y="Discharge (cms)")+
+  theme_babine()
+  #theme(axis.text.x = element_text(angle = 45, hjust = 1))
+plot.flow.ec
+
+maxmin.wt.flow <- ec08EC013 %>% 
+  summarize(max = max(Value, na.rm=T), min = min(Value, na.rm=T))
+
+max.flow.date <- ec08EC013 %>% 
+  filter(Value %in% maxmin.wt.flow$max) %>% 
+  summarize(date = Date[1])
+min.flow.date <- ec08EC013 %>% 
+  filter(Value %in% maxmin.wt.flow$min) %>% 
+  summarize(date = Date[1])
+
+
+# water level - eye balled
+
+levels.stack <- rbind(water1, water2) %>% 
+  pivot_longer(!datetime, names_to = "measure") %>% 
+  filter(measure %in% "waterlevel")
+
+plot.level <- ggplot(levels.stack) +
+  geom_line(aes(x=datetime, y=value))+
+  labs(x="Date",y="Water Level (m)")
+plot.level
+
+#compare the two
+
+ggplot()+
+  geom_line(data = ec08EC013, aes(x=datetime, y=Value))+
+  geom_line(data = levels.stack, aes(x=datetime, y = value*100), col="blue")+
+  labs(x="Date",y="Flow/Level")
 
 
 
 #### reporting date ranges ####
 
+full.date.range <- c(ymd("2021-07-14"):ymd("2021-11-25"))
 cam.date.range <- c(ymd("2021-10-06"):ymd("2021-11-26"))
 extension.date.range <- c(ymd("2021-10-02"):ymd("2021-11-26"))
 plot.date.limit <- c(ymd("2021-10-03","2021-11-26"))
 table.date.range <- c(ymd("2021-10-20"):ymd("2021-11-26"))
 
+
+#daily counts #
 
 (daily.summary.cam <- cam.data %>% 
   mutate(date=ymd(date)) %>% 
@@ -315,11 +514,12 @@ plot.cam.vs.man2 <- ggplot(stack.all.salmon.sum, aes(x=date,
                                               fill = method)) +                           # ggplot2 with default settings
   geom_bar(stat = "identity")+
   scale_x_date(limits=plot.date.limit,
-               date_breaks = "2 days")+
+               date_breaks = "4 days", date_labels = "%d-%b")+
   #geom_vline(aes(xintercept=ymd("2021-10-06")))+
   scale_y_continuous(limits=c(0,1000))+
   labs(y="daily fish count (all species)")+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme_babine()
+  #theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 plot.cam.vs.man2
 
@@ -333,12 +533,14 @@ plot.cam.vs.man3 <- ggplot(stack.all.sum.numtrap, aes(x=date,
                                               y=fishpertrap, 
                                               fill = method)) +                           # ggplot2 with default settings
   geom_bar(stat = "identity",position = "dodge")+
-  scale_x_date(limits=c(ymd("2021-09-20"),ymd("2021-10-20")),
-               date_breaks = "3 days")+
+  scale_x_date(limits=c(ymd("2021-09-20"),ymd("2021-10-21")),
+               date_breaks = "4 days", date_labels = "%d-%b")+
   #geom_vline(aes(xintercept=ymd("2021-10-06")))+
   scale_y_continuous(limits=c(0,1000))+
-  labs(y="fish count per open trap (all species)")+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  labs(x="Date", y="Daily Fish per Open Trap \n(Salmon Species)",
+       fill="")+
+  theme_babine()
+  #theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 plot.cam.vs.man3
 
@@ -350,19 +552,28 @@ daily.SK <- stack.all.salmon %>%
 
 ggplot(daily.SK)+
   geom_line(aes(x=date,y=daily.count, col=species, linetype=method))+
-  scale_x_date(limits=c(ymd("2021-10-01"),ymd("2021-10-20")))+
+  scale_x_date(limits=c(ymd("2021-09-25"),ymd("2021-10-20")))+
   scale_y_continuous(limits = c(0,1500))
 
-# jack as proportion of lg SK
+# jack as proportion of all SK
 
 SK.daily <- manual.count.daily %>% 
   rbind(daily.summary.cam) %>% 
   mutate(jk.SK.rate = jk.SK/(lg.SK+jk.SK)) %>% 
   select(date,method,lg.SK,jk.SK,jk.SK.rate)
 
-ggplot(SK.daily)+
-  geom_line(aes(x=date,y=jk.SK.rate,col=method))
 
+plot.jackSK.rate<- ggplot(SK.daily)+
+  geom_line(aes(x=as_date(date),y=jk.SK.rate,col=method,
+                size=(lg.SK+jk.SK)))+
+  geom_point(aes(x=as_date(date),y=jk.SK.rate,col=method, 
+                size=(lg.SK+jk.SK)/20))+
+  scale_x_date(limits=c(ymd("2021-07-14"),ymd("2021-10-31")),
+                breaks = "1 week", date_labels = "%d-%b")+
+  labs(x="Date", y="Daily Proportion of Jack Sockeye", col="",
+       size="")+
+  theme_babine2()
+plot.jackSK.rate
 
 
 #combine into one df #
@@ -393,17 +604,65 @@ table.end <- all.daily %>%
          ST,method)
 table.end
 
-table.totals <- all.daily %>% 
+# summary totals
+
+fish.totals <- all.daily %>% 
+  mutate(period=ifelse(date %in% c(ymd("2021-10-02"):ymd("2021-11-26")),
+                       "extension","regular"))%>% 
+  dplyr::group_by(period) %>% 
+  dplyr::summarize(`Large Sockeye`=sum(lg.SK, na.rm = T),`Jack Sockeye`=sum(jk.SK, na.rm=T),
+                   Coho=sum(CO, na.rm=T),Pink=sum(PK,na.rm=T),`Large Chinook`=sum(lg.CH,na.rm=T),
+                   `Jack Chinook`=sum(jk.CH,na.rm=T),Char=sum(BTDV,na.rm=T),
+                   Steelhead=sum(ST, na.rm=T), `Rainbow or Cutthroat`=sum(RBCT, na.rm=T),
+                   `Mountain Whitefish`=sum(MW, na.rm=T), Sucker=sum(SU, na.rm=T)) %>% 
+  arrange(desc(period))
+fish.totals
+
+fish.totals.ext <- fish.totals %>% 
+  pivot_longer(!period) %>% 
+  filter(period %in% "extension")
+
+fish.totals.reg <- fish.totals %>% 
+  pivot_longer(!period) %>% 
+  filter(period %in% "regular") %>% 
+  left_join(fish.totals.ext, by="name") %>%
+  mutate(`% Extension` = 
+           ifelse(signif(value.y/(value.x+value.y),2)*100 < 1,"<1",
+                  signif(value.y/(value.x+value.y),2)*100)) %>% 
+  select(Species = name, Regular = value.x, Extension = value.y,
+         `% Extension`)
+fish.totals.reg
+
+fish.totals.reg %>% 
+  summarise(sum(Regular), sum(Extension))
+
+fish.totals.reg %>% 
+  filter(Species %in% c("Char", "Steelhead", "Rainbow or Cutthroat",
+                        "Mountain Whitefish", "Sucker")) %>% 
+  summarize(BC.spp = sum(Extension))
+
+
+
+salmon.totals <- all.daily %>% 
   mutate(period=ifelse(date %in% c(ymd("2021-10-02"):ymd("2021-11-26")),
                         "extension","regular"))%>% 
   dplyr::group_by(period) %>% 
   dplyr::summarize(`Large SK`=sum(lg.SK, na.rm = T),`Jack SK`=sum(jk.SK, na.rm=T),
          CO=sum(CO, na.rm=T),PK=sum(PK,na.rm=T),`Large CH`=sum(lg.CH,na.rm=T),
-         `Jack CH`=sum(jk.CH,na.rm=T),`BT/DV`=sum(BTDV,na.rm=T),
-         ST=sum(ST, na.rm=T)) %>% 
+         `Jack CH`=sum(jk.CH,na.rm=T)) %>% 
   arrange(desc(period))
-table.totals
+salmon.totals
 
+
+nonsalmon.totals <- all.daily %>% 
+  mutate(period=ifelse(date %in% c(ymd("2021-10-02"):ymd("2021-11-26")),
+                       "extension","regular"))%>% 
+  dplyr::group_by(period) %>% 
+  dplyr::summarize(BTDV=sum(BTDV,na.rm=T),
+                   ST=sum(ST, na.rm=T), RBCT=sum(RBCT, na.rm=T),
+                   MW=sum(MW, na.rm=T), SU=sum(SU, na.rm=T)) %>% 
+  arrange(desc(period))
+nonsalmon.totals
 
 #export daily counts 
 
@@ -431,10 +690,16 @@ daily.sum.stacked.salmon <- daily.sum.stacked %>%
 
 plot.daily.salmon <- ggplot(daily.sum.stacked.salmon)+
   geom_line(aes(x=date, y=daily.count, colour=species), size=1)+
-  scale_x_date(limits=c(ymd("2021-07-15"),plot.date.limit[2]))+
-  geom_vline(aes(xintercept=ymd("2021-10-06")))#+
+  scale_x_date(limits=c(ymd("2021-07-15"),plot.date.limit[2]),
+               breaks= "1 week", date_labels = "%d-%b")+
+  geom_vline(aes(xintercept=ymd("2021-10-06")))+
+  labs(x="Date",y="Daily Counts",col="")+
+  theme_babine3()
   # scale_y_continuous(limits=c(0,2500))
 plot.daily.salmon
+
+#proportion of fish in daily count by species
+
 
 
 
@@ -442,10 +707,12 @@ plot.daily.salmon
 plot.daily.salmon.end <- ggplot(daily.sum.stacked.salmon)+
   geom_line(aes(x=date, y=daily.count, colour=species), size=1)+
   scale_x_date(limits=plot.date.limit,
-               date_breaks = "2 days")+
+               date_breaks = "4 days", date_labels = "%d-%b")+
   geom_vline(aes(xintercept=ymd("2021-10-06")))+
+  labs(x="Date", y="Daily Count", col="")+
   scale_y_continuous(limits=c(0,1300))+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+  theme_babine3()
+  #theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
 plot.daily.salmon.end
 
 
@@ -456,15 +723,16 @@ daily.sum.stacked.coho <- daily.sum.stacked %>%
 
 plot.daily.coho <- ggplot(daily.sum.stacked.coho)+
   #geom_line(aes(x=date, y=daily.count, colour=species), size=1)+
-  geom_line(aes(x=date, y=daily.count), size=1)+
-  geom_text(aes(x=ymd("2021-11-01"),y=300,
-                label=paste0("Total Coho in 2021:\n",
-                             sum(daily.count))))+
+  geom_line(aes(x=date, y=daily.count), size=1, col="salmon")+
+  # geom_text(aes(x=ymd("2021-11-01"),y=300,
+  #               label=paste0("Total Coho in 2021:\n",
+  #                            sum(daily.count))))+
   scale_x_date(limits=c(ymd("2021-08-15"),plot.date.limit[2]),
-               date_breaks = "2 weeks",date_labels = "%d-%b")+
+               date_breaks = "1 week",date_labels = "%d-%b")+
   geom_vline(aes(xintercept=ymd("2021-10-06")))+
-  labs(y="daily coho count", x="", col=NULL)
-
+  theme_babine()+
+  #theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  labs(y="Daily Coho Count", x="Date", col=NULL)
 
 plot.daily.coho
 
@@ -482,7 +750,8 @@ cumul.daily <- all.daily %>%
 
 plot.cumul.daily <- ggplot(cumul.daily)+
   geom_line(aes(x=date, y=cumulative.count, col=species),size=1.25)+
-  geom_vline(aes(xintercept=ymd("2021-10-06")))
+  geom_vline(aes(xintercept=ymd("2021-10-06")))+
+  theme_babine2()
 plot.cumul.daily
 
 cumul.daily.coho <- cumul.daily %>% 
@@ -490,7 +759,8 @@ cumul.daily.coho <- cumul.daily %>%
 
 plot.cumul.daily.coho <- ggplot(cumul.daily.coho)+
   geom_line(aes(x=date, y=cumulative.count, col=species),size=1.25)+
-  geom_vline(aes(xintercept=ymd("2021-10-06")))
+  geom_vline(aes(xintercept=ymd("2021-10-06")))+
+  theme_babine2()
 plot.cumul.daily.coho
 
 
@@ -515,9 +785,11 @@ daylight.hrs <-distinct(cam.data, date) %>%
 cam.data.daytime <- cam.data %>% 
   left_join(daylight.hrs) %>% 
   mutate(hour=hour(starttime),date.hr = ymd_h(paste(date,hour))) %>% 
-  mutate(daytime = ifelse(starttime >= dawn & starttime <= dusk,"day","night")) %>% 
+  mutate(daytime = ifelse(starttime > dawn & starttime < dusk,"day","night")) %>% 
   filter(chute.open %in% "Y")  
 
+
+#note: may need to correct the hour from daylight savings after Nov 7th...
 hourly.summary.cam <- cam.data.daytime %>% 
   group_by(date, date.hr) %>% 
   summarize(num.chutes = length(unique(trap)),
@@ -531,30 +803,49 @@ hourly.summary.cam <- cam.data.daytime %>%
             RBCT = sum(Rainbow, na.rm=T),
             WF = sum(Whitefish, na.rm=T),
             tot.fish = sum(Sx, SxJk, Co, Ck, CkJk),
-            fish.per.chute = tot.fish/num.chutes) 
+            fish.per.chute = tot.fish/num.chutes,
+            Sx.per.chute = (Sx+SxJk)/num.chutes,
+            Co.per.chute = Co/num.chutes,
+            Ch.per.chute = (Ck+CkJk)/num.chutes) 
 
-(byhour.summary.cam <- cam.data.daytime %>% 
-    mutate(hour=hour(starttime),date.hr = ymd_h(paste(date,hour))) %>%
-    filter(chute.open %in% "Y") %>% 
+
+
+(byhour.summary.cam <- hourly.summary.cam %>% 
+    mutate(hour = hour(date.hr)) %>% 
     group_by(hour) %>% 
-    summarize(num.chutes = length(unique(trap)),
-              Sx = sum(Sock, na.rm=T), 
-              SxJk = sum(jackSock, na.rm=T),
-              Co = sum(Coho, na.rm=T),
-              Ck = sum(Chin, na.rm=T),
-              CkJk = sum(jackChin, na.rm=T),
-              BTDV = sum(BTDV, na.rm=T),
-              ST = sum(Steelhead, na.rm=T),
-              RBCT = sum(Rainbow, na.rm=T),
-              WF = sum(Whitefish, na.rm=T),
-              tot.fish = sum(Sx, SxJk, Co, Ck, CkJk),
-              fish.per.chute = tot.fish/num.chutes)) 
+    summarize(Sockeye = mean(Sx.per.chute),
+              Coho = mean(Co.per.chute),
+              Chinook = mean(Ch.per.chute)) %>% 
+  pivot_longer(!hour))
+
+min.max.sun <- daylight.hrs %>% 
+  mutate(sunrise.hr = hour(sunrise),sunrise.min = minute(sunrise),
+         sunrise.hhmm = sunrise.hr+(sunrise.min/60),
+         sunset.hr = hour(sunset),sunset.min = minute(sunset),
+         sunset.hhmm = sunset.hr+(sunset.min/60)) %>% 
+  summarize(sunrise.min = min(sunrise.hhmm), sunrise.max = max(sunrise.hhmm),
+            sunset.min = min(sunset.hhmm), sunset.max = max(sunset.hhmm)) %>% 
+  gather()
+
+
+plot.fishbyhour <- ggplot()+
+  geom_line(data=byhour.summary.cam, aes(x=hour, y=value, col=name),
+            size=1)+
+  geom_vline(data=min.max.sun, aes(xintercept = value), size=1,
+             linetype = 2,
+             col=c("orange","orange","red","red"))+
+  scale_x_continuous(breaks = seq(0,23,2))+
+  labs(x="Hour of the Day", y="Mean fish per hour, per chute", col="")+
+  theme_babine3()
+plot.fishbyhour
+
+
+#total fish during day/night
 
 (bydaynight.summary.cam <- cam.data.daytime %>% 
-    mutate(hour=hour(starttime),date.hr = ymd_h(paste(date,hour))) %>%
-    filter(chute.open %in% "Y") %>% 
+    mutate(hour=hour(date.hr)) %>%
     group_by(daytime, date) %>% 
-    summarize(num.chutes = length(unique(trap)),
+    summarize(num.chutes = length(unique(trap)), #this doesn't make sense to use as-is
               Sx = sum(Sock, na.rm=T), 
               SxJk = sum(jackSock, na.rm=T),
               Co = sum(Coho, na.rm=T),
@@ -570,21 +861,58 @@ hourly.summary.cam <- cam.data.daytime %>%
               fish.per.chute.hr = fish.per.chute/num.hrs)) 
 
 
-ggplot(data=bydaynight.summary.cam)+
-  geom_line(aes(x=date, y=fish.per.chute, col=daytime))+
-  scale_x_date(limits = c(ymd("2021-10-05"),ymd("2021-10-15")))+
-  labs(title="# Fish, corrected for chutes open")
+#the number of unique open chutes doesn't quite makes sense because it may 
+# over count open chutes that are closed early in night/ day. Could 
+# make another field of chute hours or something like that, counting all 
+# hours that individual chutes are open.
 
-ggplot(data=bydaynight.summary.cam)+
-  geom_line(aes(x=date, y=fish.per.chute.hr, col=daytime))+
-  scale_x_date(limits = c(ymd("2021-10-05"),ymd("2021-10-15")))+
-  labs(title="# Fish, corrected for chutes open \nand hrs of day & night")
+plot.dayandnight <- ggplot(data=bydaynight.summary.cam)+
+  geom_col(aes(x=date, y=fish.per.chute, fill=daytime),
+           position="dodge",width = 0.85)+
+  scale_x_date(limits = c(ymd("2021-10-06"),ymd("2021-11-25")), 
+              date_labels = "%d-%b", date_breaks = "2 days")+
+  scale_y_continuous(limits = c(0,125))+
+  labs(y="Fish per Chute", x="Date", fill="")+
+  theme_babine3()
+  #theme(axis.text.x = element_text(angle = 45, hjust = 1))
+plot.dayandnight
 
-ggplot(data=bydaynight.summary.cam)+
-  geom_line(aes(x=date, y=tot.fish, col=daytime))+
-  scale_x_date(limits = c(ymd("2021-10-05"),ymd("2021-10-15")))+
-  labs(title="Total # Fish")
 
+
+
+
+# ggplot(data=bydaynight.summary.cam)+
+#   geom_line(aes(x=date, y=fish.per.chute.hr, col=daytime))+
+#   scale_x_date(limits = c(ymd("2021-10-05"),ymd("2021-10-20")))+
+#   scale_y_continuous(limits = c(0,40))+
+#   labs(title="# Fish, corrected for chutes open \nand hrs of day & night")
+# 
+# ggplot(data=bydaynight.summary.cam)+
+#   geom_line(aes(x=date, y=tot.fish, col=daytime))+
+#   scale_x_date(limits = c(ymd("2021-10-05"),ymd("2021-10-20")))+
+#   labs(title="Total # Fish")
+# 
+#             
+# ggplot(data=byhour.summary.cam)+
+#   geom_line(data=byhour.summary.cam, aes(x=hour, y=fish.per.chute))+
+#   geom_vline(data=min.max.sun, aes(xintercept = value), col=c("orange","orange",
+#                                                               "red","red"))+
+#   scale_x_continuous(breaks = seq(0,23,2))+
+#   labs(title="Fish by hour, corrected for # of open chutes",
+#        x="Hour of the Day", y="Fish per Chute")          
+# 
+# ggplot(data=byhour.summary.cam)+
+#   geom_line(data=byhour.summary.cam, aes(x=hour, y=tot.fish))+
+#   geom_vline(data=min.max.sun, aes(xintercept = value), col=c("orange","orange",
+#                                                               "red","red"))+
+#   scale_x_continuous(breaks = seq(0,23,2))+
+#   labs(title="Fish by hour",
+#        x="Hour of the Day", y="Fish per Chute")          
+
+
+
+
+  
 
 
 
