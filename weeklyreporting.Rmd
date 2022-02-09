@@ -1,0 +1,59 @@
+---
+title: "Babine Camera Project Summary"
+author: "Kristen Peck"
+date: "29 November, 2021"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=F)
+source("reporting.R")
+ls()
+```
+
+## Final Summary ##
+
+We closed out the Babine camera extension project late last week- all the camera chutes have been pulled, the fence panels are out and the river is running wild again! This pilot project went fairly smoothly, with lots of information to carry forward to future years. Thanks to everyone who lent a hand in setting up the project and to the crews for keeping the camp going and the data flowing! We were able to enumerate the tail end of the salmon runs, which should hopefully improve escapement estimates, particularly for coho. Here are some summaries from the end of season, along with the preliminary daily counts from the fence. This will be the final update sent out for the season but don't hesitate to get in touch with me or Ryan Whitmore if you would like more information! 
+
+
+```{r summary table, echo=FALSE, warnings=F, fig.cap="Total fish by species counted through the fence during the regular season (July 14-Oct 1) and the extension (Oct 2-Nov 25)."}
+library(knitr)
+kable(table.totals)
+```
+
+## Daily counts for end of season
+
+```{r end of season, echo=FALSE, warnings=F, fig.height=4, fig.width=6, fig.cap ="Daily counts of salmon. The vertical line marks the start of counting using the camera chutes."}
+plot.daily.salmon.end
+```
+
+## Daily counts in context
+
+```{r whole season, echo=FALSE, warnings=F, fig.height=4, fig.width=6, fig.cap ="Daily counts of salmon for the whole season of 2021. The vertical line marks the start of counting using the camera chutes."}
+plot.daily.salmon
+```
+
+```{r coho whole season, echo=FALSE, warnings=F, fig.height=4, fig.width=6, fig.cap ="Daily counts of coho for the whole season of 2021. The vertical line marks the start of counting using the camera chutes."}
+plot.daily.coho
+```
+
+## Cumulative counts
+
+```{r cumulative whole season, echo=FALSE, warnings=F, fig.height=4, fig.width=6, fig.cap ="Cumulative counts of salmon for the whole season of 2021. The vertical line marks the start of counting using the camera chutes."}
+plot.cumul.daily
+```
+
+
+```{r cumulative coho whole season, echo=FALSE, warnings=F, fig.height=4, fig.width=6, fig.cap ="Cumulative coho counts for the whole season of 2021. The vertical line marks the start of counting using the camera chutes."}
+plot.cumul.daily.coho
+```
+
+**Note on Species Codes:**
+CO = Coho; 
+jk.CH = jack Chinook; 
+jk.SK = jack Sockeye; 
+lg.CH = large Chinook; 
+lg.SK = large Sockeye; 
+PK = Pink;
+ST = Steelhead
+
