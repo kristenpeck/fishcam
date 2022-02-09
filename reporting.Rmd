@@ -1,7 +1,6 @@
 ---
 title: "Babine Camera Project Summary"
 author: "Kristen Peck"
-date: "29 November, 2021"
 output: word_document
 ---
 
@@ -11,17 +10,36 @@ source("reporting.R")
 ls()
 ```
 
-## Final Summary ##
-
-We closed out the Babine camera extension project late last week- all the camera chutes have been pulled, the fence panels are out and the river is running wild again! This pilot project went fairly smoothly, with lots of information to carry forward to future years. Thanks to everyone who lent a hand in setting up the project and to the crews for keeping the camp going and the data flowing! We were able to enumerate the tail end of the salmon runs, which should hopefully improve escapement estimates, particularly for coho. Here are some summaries from the end of season, along with the preliminary daily counts from the fence. This will be the final update sent out for the season but don't hesitate to get in touch with me or Ryan Whitmore if you would like more information! 
 
 
-```{r summary table, echo=FALSE, warnings=F, fig.cap="Total fish by species counted through the fence during the regular season (July 14-Oct 1) and the extension (Oct 2-Nov 25)."}
-library(knitr)
-kable(table.totals)
+
+## Temperature and Water Level
+
+Water temperature peaked at `r max.wt.temp$temp` degrees Celsius on `r as_date(max.wt.temp.date$datetime)` and reached a low of `r min.wt.temp$temp`degrees Celsius on `r unique(as_date(min.wt.temp.date$datetime))`.
+
+The water level varied from a maximum of `r maxmin.wt.flow$max`cms on  `r as_date(max.flow.date$date)`, and a minimum of `r maxmin.wt.flow$min`cms on  `r as_date(min.flow.date$date)`.
+
+```{r temps, echo=FALSE, warnings=F, fig.height=4, fig.width=6, fig.cap ="Air and water temperature measured twice daily at the Babine fish fence from July 14th to Nov 25th, 2021."}
+plot.temps
 ```
 
+```{r waterlevels, echo=FALSE, warnings=F, fig.height=4, fig.width=6, fig.cap ="Water discharge at an Environment Canada hydrological station (08EC013) immediately downstream of the Babine fish fence from July 14th to Nov 25th, 2021. Shaded area is the standard deviation of the discharge from 2010 to 2020 for reference."}
+plot.flow.ec
+```
+
+## Total counts
+
+The total number of salmon counted through during the regular season and extension program are shown in *salmon table*.
+
+```{r salmon table, echo=FALSE, warnings=F}
+library(knitr)
+kable(fish.totals.reg, caption = "Total salmon and non-salmon by species and size class counted through the fence during the regular season (July 14-Oct 1) and the season extension (Oct 2-Nov 25).")
+```
+
+
+
 ## Daily counts for end of season
+
 
 ```{r end of season, echo=FALSE, warnings=F, fig.height=4, fig.width=6, fig.cap ="Daily counts of salmon. The vertical line marks the start of counting using the camera chutes."}
 plot.daily.salmon.end
@@ -47,6 +65,26 @@ plot.cumul.daily
 ```{r cumulative coho whole season, echo=FALSE, warnings=F, fig.height=4, fig.width=6, fig.cap ="Cumulative coho counts for the whole season of 2021. The vertical line marks the start of counting using the camera chutes."}
 plot.cumul.daily.coho
 ```
+
+```{r cam vs man, echo = F, warnings=F, fig.height=4, fig.width=6, fig.cap = "Daily total salmon counted through camera chutes versus manual counting chutes (corrected for number of open chutes)." }
+plot.cam.vs.man3
+```
+
+
+```{r cam vs man jackSK, echo = F, warnings=F, fig.height=4, fig.width=6, fig.cap = "Proportion of jack sockeye out of total sockeye enumerated from video and from the live visual counts." }
+plot.jackSK.rate
+```
+
+
+```{r fishbyhour, echo = F, warnings=F, fig.height=4, fig.width=6, fig.cap = "Mean fish per hour through the day and night, corrected for number of open chutes. Vertical orange and red lines represent the minimum and maximum nautical sunrise and sunset times, respectively, through the season extension (Oct-Nov)." }
+plot.fishbyhour
+```
+
+```{r fishbydaynight, echo = F, warnings=F, fig.height=4, fig.width=6, fig.cap = "Total number of fish per chute passing through the camera chutes between sunrise and sunset (day) and sunset and sunrise (night)." }
+plot.dayandnight
+```
+
+
 
 **Note on Species Codes:**
 CO = Coho; 
