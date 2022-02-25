@@ -446,7 +446,11 @@ cam.stacked.BC <- daily.summary.cam.BC %>%
 
 
 plot.daily.BC <- ggplot(cam.stacked.BC)+
-  geom_line(aes(x=date, y=daily.count, colour=species), size=1)
+  geom_line(aes(x=date, y=daily.count, colour=species), size=1)+
+  scale_x_date(breaks="2 weeks", date_labels = "%d-%b")+
+  labs(x="", y="Daily Count", col="")+
+  theme_babine3()+
+  theme(legend.position = "bottom")
 plot.daily.BC
 
 daily.summary.cam.BC %>% 
@@ -621,6 +625,9 @@ fish.totals
 fish.totals.ext <- fish.totals %>% 
   pivot_longer(!period) %>% 
   filter(period %in% "extension")
+fish.totals.ext %>% 
+  summarize(sum(value))
+14/16522
 
 fish.totals.reg <- fish.totals %>% 
   pivot_longer(!period) %>% 
@@ -785,11 +792,12 @@ daylight.hrs <-distinct(cam.data, date) %>%
 cam.data.daytime <- cam.data %>% 
   left_join(daylight.hrs) %>% 
   mutate(hour=hour(starttime),date.hr = ymd_h(paste(date,hour))) %>% 
-  mutate(daytime = ifelse(starttime > dawn & starttime < dusk,"day","night")) %>% 
+  mutate(daytime = ifelse(starttime > sunrise & starttime < sunset,"day","night")) %>% 
   filter(chute.open %in% "Y")  
 
 
 #note: may need to correct the hour from daylight savings after Nov 7th...
+# double-checked this and autocorrects
 hourly.summary.cam <- cam.data.daytime %>% 
   group_by(date, date.hr) %>% 
   summarize(num.chutes = length(unique(trap)),
